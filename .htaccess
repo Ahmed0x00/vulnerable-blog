@@ -1,0 +1,8 @@
+# Enable URL rewriting
+RewriteEngine On
+
+# Set the default index file
+DirectoryIndex index.html
+
+# Redirect to index.html if accessing the root
+RewriteRule ^$ /vulnerable-blog/index.html [L]
