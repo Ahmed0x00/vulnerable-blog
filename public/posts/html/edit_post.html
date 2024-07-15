@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Post</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Edit Post</h1>
+        <form id="editForm" class="mt-4" action="../php/edit_post.php" method="POST">
+            <h2 id="author"></h2>
+            <div class="mb-3">
+                <label for="title" class="form-label">Title:</label>
+                <input type="text" id="title" name="title" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="content" class="form-label">Content:</label>
+                <textarea id="content" name="content" class="form-control" rows="5" required></textarea>
+            </div>
+            <input type="hidden" id="postId" name="id">
+            <input type="hidden" id="csrfToken" name="csrf_token">
+            <button type="submit" class="btn btn-primary">Update Post</button>
+        </form>
+
+        <div id="errorContainer" class="mt-3" style="display: none; color: red;">
+            <!-- Error messages will be displayed here -->
+        </div>
+    </div>
+    <script src="../../../JS/get_csrf_token.js"></script>
+
+    <script>
+        function fetchPostById(postId) {
+            fetch(`../php/get_posts.php?id=${postId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.posts.length > 0) {
+                        const post = data.posts.find(p => p.id == postId);
+                        document.getElementById('author').textContent = `Author: ${post.username}`;
+                        document.getElementById('title').value = post.title;
+                        document.getElementById('content').value = post.content;
+                        document.getElementById('postId').value = post.id;
+                    } else {
+                        document.body.textContent = "Post not found";
+                    }
+                })
+                .catch(error => console.error('Error fetching post:', error));
+        }
+
+        // Get postId from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const postId = urlParams.get('id');
+
+        if (postId) {
+            fetchPostById(postId);
+        } else {
+            document.body.textContent = 'Missing parameter: id';
+        }
+    </script>
+</body>
+</html>

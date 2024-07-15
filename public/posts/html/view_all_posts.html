@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Posts</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container mt-5">
+        <form id="searchForm" class="mb-4" action="view_all_posts.html" method="GET">
+            <input type="text" id="searchInput" name="search" class="form-control" placeholder="Search posts" aria-label="Search posts">
+            <button type="submit" class="btn btn-primary mt-2">Search</button>
+        </form>
+
+        <div class="mb-4">
+            <a href="create_post.html" class="btn btn-success">Create Post</a>
+        </div>
+
+        <div id="noPostsMessage" class="alert alert-warning" style="display: none;">
+            No posts found.
+        </div>
+        <div id="postsContainer" class="mt-4">
+            <!-- Posts will be dynamically inserted here -->
+        </div>
+    </div>
+    
+    <script>
+        const postsContainer = document.getElementById('postsContainer');
+        const noPostsMessage = document.getElementById('noPostsMessage');
+
+        function fetchPosts(searchTerm = '') {
+            let url = `../../posts/php/get_posts.php`;
+
+            // Append search term if it exists
+            if (searchTerm) {
+                url += `?search=${encodeURIComponent(searchTerm)}`;
+            }
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    postsContainer.innerHTML = ''; 
+                    noPostsMessage.style.display = 'none'; 
+
+                    if (data.success) {
+                        const posts = data.posts;
+
+                        if (searchTerm) {
+                            const searchResultsHeader = document.createElement('div');
+                            searchResultsHeader.innerHTML = `<h2>Search Results for: ${searchTerm}</h2>`;
+                            postsContainer.appendChild(searchResultsHeader);
+                        }
+
+                        if (posts.length === 0) {
+                            noPostsMessage.innerHTML = searchTerm ? 
+                                `No posts match: ${searchTerm}` : 
+                                'No posts available.';
+                            noPostsMessage.style.display = 'block';
+                        } else {
+                            posts.forEach(post => {
+                                const postElement = document.createElement('div');
+                                postElement.className = 'border p-3 mb-3 rounded';
+                                postElement.innerHTML = `
+                                    <h2>${post.title}</h2>
+                                    <p><strong>Author:</strong> ${post.username}</p>
+                                    <p>${post.content}</p>
+                                    <p><em>Created At: ${post.created_at}</em></p>
+                                    <a href="view_post.html?id=${post.id}" class="btn btn-info">View post</a>
+                                `;
+                                postsContainer.appendChild(postElement);
+                            });
+                        }
+                    } else {
+                        console.error('Failed to fetch posts:', data.error);
+                        noPostsMessage.innerHTML = `Error: ${data.error}`;
+                        noPostsMessage.className = 'alert alert-danger'; 
+                        noPostsMessage.style.display = 'block'; 
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching posts:', error);
+                    noPostsMessage.textContent = 'Error fetching posts.';
+                    noPostsMessage.className = 'alert alert-danger'; 
+                    noPostsMessage.style.display = 'block'; 
+                });
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchTerm = urlParams.get('search');
+        fetchPosts(searchTerm || '');
+    </script>
+</body>
+</html>

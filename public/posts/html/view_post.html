@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>View Post</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1 class="mb-4">View Post</h1>
+      <div id="postContainer" class="border p-4 mb-4 rounded shadow-sm">
+        <!-- Post details will be dynamically inserted here -->
+      </div>
+
+      <form id="commentForm" class="mb-4">
+        <div class="mb-3">
+          <label for="comment" class="form-label">Add a Comment:</label>
+          <textarea
+            id="comment"
+            name="comment"
+            class="form-control"
+            rows="4"
+            required
+          ></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Comment</button>
+      </form>
+
+      <h2 class="mb-3">Comments</h2>
+      <ul id="commentsList" class="list-unstyled">
+        <!-- Comments will be dynamically inserted here -->
+      </ul>
+    </div>
+
+    <script>
+      function fetchPostById(postId) {
+        fetch(`../php/get_posts.php?id=${postId}`)
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success && data.posts.length > 0) {
+              const post = data.posts[0];
+              const postContainer = document.getElementById("postContainer");
+              postContainer.innerHTML = `
+                            <h2>${post.title}</h2>
+                            <p><strong>Author:</strong> ${post.username}</p>
+                            <p>${post.content}</p>
+                            <p><em>Created At: ${post.created_at}</em></p>
+                            <hr>
+                        `;
+
+              // Add delete button (if admin or owner)
+              const deleteButton = document.createElement("button");
+              deleteButton.textContent = "Delete Post";
+              deleteButton.classList.add("btn", "btn-danger", "me-2");
+              deleteButton.onclick = function () {
+                if (confirm("Are you sure you want to delete this post?")) {
+                  getCsrfToken().then((csrfToken) => {
+                    fetch("../../posts/php/delete_post.php", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                      },
+                      body: `id=${postId}&csrf_token=${csrfToken}`,
+                    })
+                      .then((response) => response.json())
+                      .then((data) => {
+                        if (data.success) {
+                          alert("Post deleted successfully");
+                          window.location.href = "view_all_posts.html"; // Redirect or refresh the page
+                        } else {
+                          alert(
+                            "Failed to delete post: " +
+                              (data.error || "Unknown error")
+                          );
+                        }
+                      })
+                      .catch((error) => {
+                        console.error("Error deleting post:", error);
+                        alert("Error deleting post");
+                      });
+                  });
+                }
+              };
+              postContainer.appendChild(deleteButton);
+
+              // Add edit button (if admin or owner)
+              const editButton = document.createElement("button");
+              editButton.textContent = "Edit Post";
+              editButton.classList.add("btn", "btn-warning");
+              editButton.onclick = function () {
+                window.location.href = `edit_post.html?id=${postId}`;
+              };
+              postContainer.appendChild(editButton);
+
+              fetchComments(postId);
+            } else {
+              console.error("Post not found or error in response");
+              document.getElementById("postContainer").textContent =
+                "Post not found";
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching post:", error);
+          });
+      }
+
+      function fetchComments(postId) {
+        fetch(`../../comments/get_comments.php?postId=${postId}`)
+          .then((response) => response.json())
+          .then((data) => {
+            const commentsList = document.getElementById("commentsList");
+            commentsList.innerHTML = ""; 
+            if (data.success && data.comments.length > 0) {
+              data.comments.forEach((comment) => {
+                const commentItem = document.createElement("li");
+                commentItem.classList.add(
+                  "mb-3",
+                  "border",
+                  "p-3",
+                  "rounded",
+                  "shadow-sm"
+                );
+                commentItem.innerHTML = `
+                                <strong>${comment.username}:</strong> ${comment.comment}
+                                <div class="mt-2">
+                                    <button class="btn btn-sm btn-warning me-1" onclick="editComment(${comment.id})">Edit</button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteComment(${comment.id}, ${postId})">Delete</button>
+                                </div>
+                            `;
+                commentsList.appendChild(commentItem);
+              });
+            } else {
+              const commentItem = document.createElement("li");
+              commentItem.innerText = "No comments on this post";
+              commentsList.appendChild(commentItem);
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching comments:", error);
+          });
+      }
+
+      function editComment(commentId) {
+        const newComment = prompt("Enter your edited comment:");
+        if (newComment === null || newComment.trim() === "") {
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("commentId", commentId);
+        formData.append("newComment", newComment);
+
+        fetch("../../comments/edit_comment.php", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              alert("Comment updated successfully");
+              fetchComments(postId);
+            } else {
+              alert("Failed to edit comment");
+            }
+          })
+          .catch((error) => {
+            console.error("Error editing comment:", error);
+            alert("Error editing comment");
+          });
+      }
+
+      function deleteComment(commentId, postId) {
+        if (!confirm("Are you sure you want to delete this comment?")) {
+          return; 
+        }
+
+        const formData = new FormData();
+        formData.append("commentId", commentId);
+
+        fetch("../../comments/delete_comment.php", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              alert("Comment deleted successfully");
+              fetchComments(postId);
+            } else {
+              alert("Failed to delete comment");
+            }
+          })
+          .catch((error) => {
+            console.error("Error deleting comment:", error);
+            alert("Error deleting comment");
+          });
+      }
+
+      function getCsrfToken() {
+        return fetch("../../functions/get_csrf_token.php")
+          .then((response) => response.json())
+          .then((data) => {
+            return data.csrf_token;
+          })
+          .catch((error) => {
+            console.error("Error fetching CSRF token:", error);
+            return null;
+          });
+      }
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const postId = urlParams.get("id");
+      if (postId) {
+        fetchPostById(postId);
+      } else {
+        console.error("Post ID not provided");
+        document.body.innerHTML = 'Missing parameter "id"';
+      }
+
+      // Handle form submission for adding a comment
+      document
+        .getElementById("commentForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const formData = new FormData(this);
+          formData.append("postId", postId);
+
+          fetch("../../comments/create_comment.php", {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                alert("Comment added successfully");
+                this.reset(); 
+                fetchComments(postId);
+              } else {
+                alert("Failed to add comment");
+              }
+            })
+            .catch((error) => {
+              console.error("Error adding comment:", error);
+              alert("Error adding comment");
+            });
+        });
+    </script>
+  </body>
+</html>
