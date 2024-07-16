@@ -12,7 +12,7 @@ git clone https://github.com/Ahmed2456/vulnerable-blog.git
 ```
 
 ## phpMyAdmin Setup
-You should download and configure phpMyAdmin by following this [blog post](https://computingforgeeks.com/install-phpmyadmin-on-kali-linux/). After you have finished, go to `http://127.0.0.1/phpmyadmin` and log in.
+You should download and configure phpMyAdmin by following this [video](https://www.youtube.com/watch?v=65BpgWHNJUk). After you have finished, go to `http://127.0.0.1/phpmyadmin` and log in.
 
 Then, go to `http://127.0.0.1/phpmyadmin/index.php?route=/server/databases` and create a new database called `vuln_blog`. After that, go to `Import`, navigate to the directory containing the repository, choose `vuln_blog.sql`, and click on Import.
 
