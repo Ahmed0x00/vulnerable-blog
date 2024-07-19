@@ -64,7 +64,7 @@ $userId = $userResult->fetch_assoc()['id'];
 <body class="bg-light">
     <div class="container mt-5">
         <header class="text-center mb-4">
-            <h1 class="text-primary">Welcome, <?php echo htmlspecialchars($username); ?>!</h1>
+            <h1 class="text-primary">Welcome, <?php echo $username; ?>!</h1>
             <p class="alert alert-success">You are logged in successfully.</p>
         </header>
 
