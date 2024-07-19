@@ -44,9 +44,9 @@ $newComment = array(
 $comments[] = $newComment;
 
 if (file_put_contents('../api/comments.json', json_encode($comments, JSON_PRETTY_PRINT))) {
-    echo json_encode(array('success' => true));
+    echo json_encode(['success' => true]);
 } else {
     http_response_code(500); // Internal Server Error
-    echo json_encode(array('error' => 'Failed to save comment to file'));
+    echo json_encode(['error' => 'Failed to save comment to file']);
 }
 ?>
