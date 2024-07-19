@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $updateCredits->execute();
         $updateCredits->close();
 
-        $updateDiscountCode = $conn->query("UPDATE discount_codes SET used = 1 WHERE code = '$discountCode'"); 
+        $updateDiscountCode = $conn->query("UPDATE discount_codes SET used = 1 WHERE code = '$code'"); 
         echo "Discount applied successfully!<br>";
     } else {
         die("Invalid or already used discount code.");
