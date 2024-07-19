@@ -25,8 +25,6 @@ if ($row = $result->fetch_assoc()) {
 $stmt->close();
 
 if (!empty($_POST['discount_code'])) {
-    $discountCode = $_POST['discount_code'];
-
     include 'submit_code.php'; 
 }
 
