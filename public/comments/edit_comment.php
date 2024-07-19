@@ -57,9 +57,9 @@ if (!$commentFound) {
 }
 
 if (file_put_contents('../api/comments.json', json_encode($commentData, JSON_PRETTY_PRINT))) {
-    echo json_encode(array('success' => true));
+    echo json_encode(['success' => true]);
 } else {
     http_response_code(500);
-    echo json_encode(array('error' => 'Failed to save comment to file'));
+    echo json_encode(['error' => 'Failed to save comment to file']);
 }
 ?>
