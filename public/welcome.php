@@ -29,7 +29,7 @@ if (isset($_GET['username'])) {
     $username = $_GET['username'];
 
     if (containsXSS($username)) {
-        echo '<p class="alert alert-danger">HAHAHAHA You can\'t cause XSS here, you loser</p>';
+        echo '<p class="alert alert-danger">HAHAHAHA XSS is not possible here, you loser!</p>';
     }
 
 } else {
