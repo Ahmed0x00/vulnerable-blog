@@ -56,7 +56,7 @@ if (!$commentFound) {
     exit();
 }
 
-if (file_put_contents('../api/comments.json', json_encode($commentData, JSON_PRETTY_PRINT))) {
+if (file_put_contents('../api/comments.json', json_encode($commentData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES))) {
     echo json_encode(['success' => true]);
 } else {
     http_response_code(500);
