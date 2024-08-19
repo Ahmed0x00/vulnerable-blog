@@ -20,5 +20,5 @@ $filteredComments = array_filter($comments, function($comment) use ($postId) {
     return $comment['postId'] == $postId;
 });
 
-echo json_encode(['success' => true, 'comments' => array_values($filteredComments)]);
+echo json_encode(['success' => true, 'comments' => array_values($filteredComments)], JSON_UNESCAPED_SLASHES);?>
 ?>
