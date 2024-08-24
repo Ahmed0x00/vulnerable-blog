@@ -32,6 +32,24 @@ if ($row = $result->fetch_assoc()) {
 $postId = $_POST['postId'];
 $comment = $_POST['comment'];
 
+// Load posts data
+$posts = json_decode(file_get_contents('../api/posts.json'), true);
+
+// Check if the post ID exists
+$postExists = false;
+foreach ($posts as $post) {
+    if ($post['id'] == $postId) {
+        $postExists = true;
+        break;
+    }
+}
+
+if (!$postExists) {
+    http_response_code(404); // Not Found
+    echo json_encode(['error' => 'Post ID not found']);
+    exit();
+}
+
 $comments = json_decode(file_get_contents('../api/comments.json'), true);
 
 $newComment = array(
