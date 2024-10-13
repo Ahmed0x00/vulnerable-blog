@@ -75,7 +75,7 @@ $formActionPassword = "../update_data/change_password.php";
             </form>
         
         <?php else: ?>
-            <form id="usernameFormUser" action="<?php echo $formActionUsername; ?>?username=<?php echo $loggedInUsername; ?>" method="post" class="mb-4">
+            <form id="usernameFormUser" action="<?php echo $formActionUsername; ?>?current_username=<?php echo $loggedInUsername; ?>" method="post" class="mb-4">
                 <div class="mb-3">
                     <label for="username" class="form-label">New Username:</label>
                     <input type="text" id="username" name="username" class="form-control" required>
