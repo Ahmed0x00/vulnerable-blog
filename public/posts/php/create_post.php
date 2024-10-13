@@ -22,13 +22,11 @@ if ($row = $result->fetch_assoc()) {
     exit();
 }
 
-$isAdmin = ($username === 'admin');
-
 $userResult = $conn->query("SELECT membership FROM users WHERE username = '$username'");
 $userRow = $userResult->fetch_assoc();
 $membershipStatus = $userRow['membership'] ?? 'free';
 
-$posts_file = '../../api/posts.json';
+$posts_file = '../../data/posts.json';
 if (file_exists($posts_file)) {
     $posts = json_decode(file_get_contents($posts_file), true);
     if ($posts === null && json_last_error() !== JSON_ERROR_NONE) {
@@ -43,8 +41,8 @@ $userPostsCount = count(array_filter($posts, function ($post) use ($username) {
     return $post['username'] === $username;
 }));
 
-// Limit non-admin users to 5 posts
-if (!$isAdmin && $membershipStatus === 'free' && $userPostsCount >= 5) {
+// Limit free membership users to 5 posts
+if ($membershipStatus === 'free' && $userPostsCount >= 5) {
     echo json_encode(['error' => 'Post limit reached. Upgrade your membership to create more posts.']);
     exit();
 }
