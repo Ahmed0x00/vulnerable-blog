@@ -1,6 +1,7 @@
 <?php
 session_start();
 include '../config/dbconnect.php';
+include 'functions/csrf.php';
 
 $token = isset($_GET['token']) ? $_GET['token'] : '';
 header("Content-Security-Policy: script-src 'self'; report-uri /csp-report?token=" . $token);
