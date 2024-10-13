@@ -1,9 +1,8 @@
 <?php
 session_start();
-include '../config/dbconnect.php'; // Assuming dbconnect.php includes any necessary initialization
+include '../config/dbconnect.php'; 
 include '../public/functions/csrf.php';
 
-// Check if the user is logged in by verifying the session ID cookie
 if (!isset($_COOKIE['session_id'])) {
     header("Location: ../login.php");
     exit();
@@ -12,9 +11,9 @@ if (!isset($_COOKIE['session_id'])) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $new_username = $_POST['username'];
-    $target_username = $_GET['username']; // Get the target username from GET parameter
+    $current_username = $_GET['current_username'];
 
-    if ($target_username == "admin") {
+    if ($current_username == "admin") {
         die("admin username can't be updated!");
     }
 
@@ -24,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Retrieve the target user from the users table
     $fetch_stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
-    $fetch_stmt->bind_param("s", $target_username);
+    $fetch_stmt->bind_param("s", $current_username);
     $fetch_stmt->execute();
     $fetch_result = $fetch_stmt->get_result();
 
@@ -35,12 +34,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($fetch_row = $fetch_result->fetch_assoc()) {
         $user_exists = true;
     } else {
+        header('HTTP/1.1 403 Forbidden');
         die("Target user not found!");
+    }
+
+    // check if new username exists
+    $result = $conn->query("SELECT * FROM users WHERE username = '$new_username'");
+    if ($result->num_rows > 0) {
+        header('HTTP/1.1 403 Forbidden');
+        die("New username already exists!");
     }
 
     // Update username in users table
     $update_users_stmt = $conn->prepare("UPDATE users SET username = ? WHERE username = ?");
-    $update_users_stmt->bind_param("ss", $new_username, $target_username);
+    $update_users_stmt->bind_param("ss", $new_username, $current_username);
     $update_users_result = $update_users_stmt->execute();
 
     if ($update_users_result) {
@@ -49,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // If the user exists, update the username in sessions table
         if ($user_exists) {
             $update_sessions_stmt = $conn->prepare("UPDATE sessions SET username = ? WHERE username = ?");
-            $update_sessions_stmt->bind_param("ss", $new_username, $target_username);
+            $update_sessions_stmt->bind_param("ss", $new_username, $current_username);
             $update_sessions_stmt->execute();
             $update_sessions_stmt->close();
         }
