@@ -3,7 +3,6 @@ include '../config/dbconnect.php';
 
 session_start();
 
-
 // Check if the user is already logged in
 if (isset($_COOKIE['session_id'])) {
     echo '<div class="container mt-5">
@@ -48,25 +47,26 @@ if (isset($_COOKIE['session_id'])) {
             exit();
         } else {
             echo '<div class="alert alert-danger">Invalid username or password</div>';
+            // Fetch and display the result of the SQL query
+            while ($row = $result->fetch_assoc()) {
+                echo '<pre>' . print_r($row, true) . '</pre>';
+            }
         }
-
-        if (mysqli_error($conn)) {
-            echo '<div class="alert alert-danger">Error: ' . mysqli_error($conn) . '</div>';
-        }
-    } else {
-        echo '<h2>Login</h2>
-        <form action="' . $_SERVER['PHP_SELF'] . '" method="post" class="mt-4">
-                <div class="mb-3">
-                    <label for="identifier" class="form-label">Username or Email:</label>
-                    <input type="text" id="identifier" name="identifier" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password:</label>
-                    <input type="password" id="password" name="password" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Login</button>
-              </form>';
+        
     }
+
+    echo '<h2>Login</h2>
+    <form action="' . $_SERVER['PHP_SELF'] . '" method="post" class="mt-4">
+        <div class="mb-3">
+            <label for="identifier" class="form-label">Username or Email:</label>
+            <input type="text" id="identifier" name="identifier" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password:</label>
+            <input type="password" id="password" name="password" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>';
 }
 
 mysqli_close($conn);
