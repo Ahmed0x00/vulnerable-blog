@@ -1,7 +1,6 @@
 <?php
 session_start();
 include '../config/dbconnect.php';
-include '../public/functions/csrf.php';
 
 if (!isset($_COOKIE['session_id'])) {
     header("Location: ../login.php");
