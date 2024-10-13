@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    $postFile = '../../api/posts.json';
+    $postFile = '../../data/posts.json';
     $postsData = json_decode(file_get_contents($postFile), true);
 
     $found = false;

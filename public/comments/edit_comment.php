@@ -30,7 +30,7 @@ if ($row = $result->fetch_assoc()) {
 }
 
 // Read comments from comments.json
-$commentData = json_decode(file_get_contents('../api/comments.json'), true);
+$commentData = json_decode(file_get_contents('../data/comments.json'), true);
 
 $commentId = $_POST['commentId'];
 $newComment = $_POST['newComment']; 
@@ -56,7 +56,7 @@ if (!$commentFound) {
     exit();
 }
 
-if (file_put_contents('../api/comments.json', json_encode($commentData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES))) {
+if (file_put_contents('../data/comments.json', json_encode($commentData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES))) {
     echo json_encode(['success' => true]);
 } else {
     http_response_code(500);

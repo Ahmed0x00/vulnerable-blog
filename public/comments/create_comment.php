@@ -33,7 +33,7 @@ $postId = $_POST['postId'];
 $comment = $_POST['comment'];
 
 // Load posts data
-$posts = json_decode(file_get_contents('../api/posts.json'), true);
+$posts = json_decode(file_get_contents('../data/posts.json'), true);
 
 // Check if the post ID exists
 $postExists = false;
@@ -50,7 +50,7 @@ if (!$postExists) {
     exit();
 }
 
-$comments = json_decode(file_get_contents('../api/comments.json'), true);
+$comments = json_decode(file_get_contents('../data/comments.json'), true);
 
 $newComment = array(
     'id' => count($comments) + 1,
@@ -61,7 +61,7 @@ $newComment = array(
 
 $comments[] = $newComment;
 
-if (file_put_contents('../api/comments.json', json_encode($comments, JSON_PRETTY_PRINT))) {
+if (file_put_contents('../data/comments.json', json_encode($comments, JSON_PRETTY_PRINT))) {
     echo json_encode(['success' => true]);
 } else {
     http_response_code(500); // Internal Server Error

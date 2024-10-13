@@ -86,8 +86,8 @@ if ($stmt->execute()) {
     }
 
     // Delete associated posts and comments
-    $postsFile = '../public/api/posts.json';
-    $commentsFile = '../public/api/comments.json';
+    $postsFile = '../public/data/posts.json';
+    $commentsFile = '../public/data/comments.json';
 
     $postDeleteSuccess = deleteUserRelatedData($accountToDelete, $postsFile);
     $commentDeleteSuccess = deleteUserRelatedData($accountToDelete, $commentsFile);

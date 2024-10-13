@@ -13,7 +13,7 @@ if (!isset($_GET['postId'])) {
 
 $postId = $_GET['postId'];
 
-$comments = json_decode(file_get_contents('../api/comments.json'), true);
+$comments = json_decode(file_get_contents('../data/comments.json'), true);
 
 // Filter comments based on postId
 $filteredComments = array_filter($comments, function($comment) use ($postId) {

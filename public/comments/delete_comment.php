@@ -30,7 +30,7 @@ if ($row = $result->fetch_assoc()) {
 }
 
 $commentId = $_POST['commentId'];
-$commentData = json_decode(file_get_contents('../api/comments.json'), true);
+$commentData = json_decode(file_get_contents('../data/comments.json'), true);
 
 $commentFound = false;
 foreach ($commentData as $key => $comment) {
@@ -53,7 +53,7 @@ if ($commentFound) {
         $comment['id'] = $index + 1;
     }
 
-    if (file_put_contents('../api/comments.json', json_encode($commentData, JSON_PRETTY_PRINT))) {
+    if (file_put_contents('../data/comments.json', json_encode($commentData, JSON_PRETTY_PRINT))) {
         echo json_encode(['success' => true]);
     } else {
         http_response_code(500); 

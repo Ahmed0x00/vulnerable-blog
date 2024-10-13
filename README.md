@@ -33,14 +33,14 @@ $conn = mysqli_connect($servername, $username, $password, $database);
 Replace `username` and `password` with the username and password you used when logging in to phpMyAdmin.
 
 ## Changing Ownership and Permissions
-To enable writing files in the API and uploading files, go to the repository directory and run the following commands:
+To enable writing files in the Data directory and uploading files, go to the repository directory and run the following commands:
 ```bash
-sudo chmod 644 public/api/comments.json
-sudo chmod 644 public/api/posts.json
+sudo chmod 644 public/data/comments.json
+sudo chmod 644 public/data/posts.json
 sudo chmod 644 public/comments/create_comment.php
 sudo chmod 644 public/posts/php/create_post.php
-sudo chmod -R 755 public/api
-sudo chown -R www-data:www-data public/api
+sudo chmod -R 755 public/data
+sudo chown -R www-data:www-data public/data
 sudo chmod 644 public/upload.php
 sudo chmod -R 755 public/uploads
 sudo chown -R www-data:www-data public/uploads

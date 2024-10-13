@@ -48,7 +48,7 @@ $data['discount_used'] = ($code_data['used'] == 0) ? "no" : "yes";
 // Count posts and comments in JSON files
 $files = ['posts', 'comments'];
 foreach ($files as $file) {
-    $file_path = "../public/api/{$file}.json";
+    $file_path = "../public/data/{$file}.json";
     $count = 0;
     if (file_exists($file_path)) {
         $json = file_get_contents($file_path);

@@ -27,7 +27,7 @@ $stmt->close();
 
 $postId = $_POST['id'];
 
-$postFile = '../../api/posts.json';
+$postFile = '../../data/posts.json';
 $postsData = json_decode(file_get_contents($postFile), true);
 
 $canDelete = false;
@@ -49,7 +49,7 @@ if (!$canDelete) {
 if ($canDelete) {
     if (file_put_contents($postFile, json_encode(array_values($postsData), JSON_PRETTY_PRINT))) {
         // Delete comments associated with the post
-        $commentsFile = '../../api/comments.json';
+        $commentsFile = '../../data/comments.json';
         $commentsData = json_decode(file_get_contents($commentsFile), true);
 
         foreach ($commentsData as $key => $comment) {

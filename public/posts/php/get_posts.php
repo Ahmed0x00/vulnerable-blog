@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 
-$posts_file = '../../api/posts.json';
+$posts_file = '../../data/posts.json';
 
 if (file_exists($posts_file)) {
     $posts = json_decode(file_get_contents($posts_file), true);
